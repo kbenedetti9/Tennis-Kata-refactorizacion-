@@ -1,36 +1,59 @@
-
 public class TennisGame3 implements TennisGame {
     
-    private int p2;
-    private int p1;
-    private String p1N;
-    private String p2N;
+    private transient int puntaje2;
+    private transient int puntaje1;
+    private transient final String nombreJugador1;
+    private transient final String nombreJugador2;
 
-    public TennisGame3(String p1N, String p2N) {
-        this.p1N = p1N;
-        this.p2N = p2N;
+    public TennisGame3(final String nombreJugador1,final String nombreJugador2) {
+        this.nombreJugador1 = nombreJugador1;
+        this.nombreJugador2 = nombreJugador2;
     }
 
+    @Override
     public String getScore() {
-        String s;
-        if (p1 < 4 && p2 < 4 && !(p1 + p2 == 6)) {
-            String[] p = new String[]{"Love", "Fifteen", "Thirty", "Forty"}; 
-            s = p[p1];
-            return (p1 == p2) ? s + "-All" : s + "-" + p[p2];
-        } else {
-            if (p1 == p2)
-                return "Deuce";
-            s = p1 > p2 ? p1N : p2N;
-            return ((p1-p2)*(p1-p2) == 1) ? "Advantage " + s : "Win for " + s;
+        String salida;
+        final String[] arregloPuntajes = {"Love", "Fifteen", "Thirty", "Forty","Deuce"};
+        if (esMenor() && esDiferenteA(sumarPuntajes(), 6)){
+            salida = arregloPuntajes[puntaje1];
+            return esIgual(puntaje1, puntaje2)
+                    ? salida + "-All"
+                    : salida + "-" + arregloPuntajes[puntaje2];
+        } else{
+            if (esIgual(puntaje1, puntaje2)) {
+                return arregloPuntajes[4];
+            }
+            final int diferencia = Math.abs(puntaje1 - puntaje2);
+            salida = puntaje1 > puntaje2 ? nombreJugador1 : nombreJugador2;
+            return esIgual(diferencia,1)
+                    ? "Advantage " + salida
+                    : "Win for " + salida;
         }
     }
-    
-    public void wonPoint(String playerName) {
-        if (playerName == "player1")
-            this.p1 += 1;
-        else
-            this.p2 += 1;
-        
+
+    private int sumarPuntajes() {
+        return puntaje1 + puntaje2;
+    }
+
+    private boolean esMenor() {
+        return puntaje1 < 4 && puntaje2 < 4;
+    }
+
+    private boolean esIgual(final int puntaje1,final int puntaje2) {
+        return puntaje1 == puntaje2;
+    }
+
+    private boolean esDiferenteA(final int suma,final int factor) {
+        return suma != factor;
+    }
+
+    @Override
+    public void wonPoint(final String playerName) {
+        if ("player1".equalsIgnoreCase(playerName)) {
+            this.puntaje1 += 1;
+        } else {
+            this.puntaje2 += 1;
+        }
     }
 
 }
